@@ -15,7 +15,7 @@ import java.util.List;
 public class GroupDAO {
 
     public GroupDTO getGroupById(int groupId) throws SQLException {
-        String sql = "SELECT * FROM groups WHERE group_id = ?";
+        String sql = "SELECT * FROM \"groups\" WHERE group_id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, groupId);
@@ -30,7 +30,7 @@ public class GroupDAO {
 
     public List<GroupDTO> getAllGroups() throws SQLException {
         List<GroupDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM groups ORDER BY group_id";
+        String sql = "SELECT * FROM \"groups\" ORDER BY group_id";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -43,7 +43,7 @@ public class GroupDAO {
 
     public CourseDTO getCourseByGroupId(int groupId) throws SQLException {
         String sql = "SELECT c.* FROM courses c " +
-                     "JOIN groups g ON c.course_id = g.course_id " +
+                     "JOIN \"groups\" g ON c.course_id = g.course_id " +
                      "WHERE g.group_id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -87,7 +87,7 @@ public class GroupDAO {
     }
 
     public GroupDTO getGroupByUserId(int userId) throws SQLException {
-        String sql = "SELECT g.* FROM groups g " +
+        String sql = "SELECT g.* FROM \"groups\" g " +
                      "JOIN group_members gm ON g.group_id = gm.group_id " +
                      "WHERE gm.user_id = ?";
         try (Connection conn = DBUtil.getConnection();

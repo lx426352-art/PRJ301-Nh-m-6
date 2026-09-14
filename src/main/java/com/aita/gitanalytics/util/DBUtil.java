@@ -78,7 +78,7 @@ public class DBUtil {
                 "    course_name VARCHAR(100) NOT NULL, " +
                 "    semester VARCHAR(20) NOT NULL" +
                 "); " +
-                "CREATE TABLE IF NOT EXISTS groups (" +
+                "CREATE TABLE IF NOT EXISTS \"groups\" (" +
                 "    group_id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "    course_id INT NOT NULL, " +
                 "    group_name VARCHAR(50) NOT NULL, " +
@@ -136,7 +136,7 @@ public class DBUtil {
                     "('student_bob', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'Bob Tran', 'bob.t@fe.edu.vn', 'STUDENT', 'bobtran_dev'), " +
                     "('student_charlie', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'Charlie Le', 'charlie.l@fe.edu.vn', 'STUDENT', 'charliele_lazy'); " +
                     "INSERT INTO courses (course_code, course_name, semester) VALUES ('PRJ301', 'Java Web Application Development', 'Fall 2026'); " +
-                    "INSERT INTO groups (course_id, group_name, git_repo_url) VALUES (1, 'Group 5 - Git Analytics', 'https://github.com/prj301-group5/aita-git-analytics'); " +
+                    "INSERT INTO \"groups\" (course_id, group_name, git_repo_url) VALUES (1, 'Group 5 - Git Analytics', 'https://github.com/prj301-group5/aita-git-analytics'); " +
                     "INSERT INTO group_members (group_id, user_id, role_in_group) VALUES (1, 2, 'LEADER'), (1, 3, 'MEMBER'), (1, 4, 'MEMBER'); " +
                     "INSERT INTO commit_logs (group_id, user_id, commit_hash, commit_message, additions, deletions, total_churn, commit_date) VALUES " +
                     "(1, 2, 'a1b2c3d4e5f67890123456789012345678901234', 'feat(gitanalytics): initial project structure setup', 450, 10, 460, '2026-09-14 09:00:00'), " +

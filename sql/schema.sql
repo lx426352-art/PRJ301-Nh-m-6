@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS contribution_assessments CASCADE;
 DROP TABLE IF EXISTS author_metrics CASCADE;
 DROP TABLE IF EXISTS commit_logs CASCADE;
 DROP TABLE IF EXISTS group_members CASCADE;
-DROP TABLE IF EXISTS groups CASCADE;
+DROP TABLE IF EXISTS "groups" CASCADE;
 DROP TABLE IF EXISTS courses CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
@@ -33,7 +33,7 @@ CREATE TABLE courses (
 );
 
 -- 3. Table Groups
-CREATE TABLE groups (
+CREATE TABLE "groups" (
     group_id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL REFERENCES courses(course_id) ON DELETE CASCADE,
     group_name VARCHAR(50) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE groups (
 
 -- 4. Table Group Members
 CREATE TABLE group_members (
-    group_id INT NOT NULL REFERENCES groups(group_id) ON DELETE CASCADE,
+    group_id INT NOT NULL REFERENCES "groups"(group_id) ON DELETE CASCADE,
     user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     role_in_group VARCHAR(20) DEFAULT 'MEMBER', -- 'LEADER', 'MEMBER'
     PRIMARY KEY (group_id, user_id)
@@ -52,7 +52,7 @@ CREATE TABLE group_members (
 -- 5. Table Commit Logs
 CREATE TABLE commit_logs (
     commit_id INT AUTO_INCREMENT PRIMARY KEY,
-    group_id INT NOT NULL REFERENCES groups(group_id) ON DELETE CASCADE,
+    group_id INT NOT NULL REFERENCES "groups"(group_id) ON DELETE CASCADE,
     user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
     commit_hash VARCHAR(40) NOT NULL,
     commit_message TEXT NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE commit_logs (
 -- 6. Table Author Metrics (ICI Calculated Scores)
 CREATE TABLE author_metrics (
     metric_id INT AUTO_INCREMENT PRIMARY KEY,
-    group_id INT NOT NULL REFERENCES groups(group_id) ON DELETE CASCADE,
+    group_id INT NOT NULL REFERENCES "groups"(group_id) ON DELETE CASCADE,
     user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     total_commits INT NOT NULL DEFAULT 0,
     total_additions INT NOT NULL DEFAULT 0,
@@ -102,7 +102,7 @@ INSERT INTO users (username, password_hash, full_name, email, role, github_usern
 INSERT INTO courses (course_code, course_name, semester) VALUES 
 ('PRJ301', 'Java Web Application Development', 'Fall 2026');
 
-INSERT INTO groups (course_id, group_name, git_repo_url) VALUES 
+INSERT INTO "groups" (course_id, group_name, git_repo_url) VALUES 
 (1, 'Group 5 - Git Analytics', 'https://github.com/prj301-group5/aita-git-analytics');
 
 INSERT INTO group_members (group_id, user_id, role_in_group) VALUES 
