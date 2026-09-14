@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  aita-git-analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aita_group5_sandbox
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    restart: unless-stopped
