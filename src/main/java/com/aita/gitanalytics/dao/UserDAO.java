@@ -2,32 +2,46 @@ package com.aita.gitanalytics.dao;
 
 import com.aita.gitanalytics.dto.UserDTO;
 import com.aita.gitanalytics.util.DBUtil;
-import com.aita.gitanalytics.util.PasswordUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
 
-    public UserDTO authenticate(String username, String rawPassword) throws SQLException {
-        String sql = "SELECT * FROM users WHERE username = ? OR email = ?";
+    /**
+     * Hàm thêm mới User vào bảng users
+     */
+    public int createUser(String fullName, String email, String githubUsername) throws SQLException {
+        String sql = "INSERT INTO users (full_name, email, github_username) VALUES (?, ?, ?)";
+        
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            ps.setString(2, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String storedHash = rs.getString("password_hash");
-                    if (PasswordUtil.verifyPassword(rawPassword, storedHash)) {
-                        return mapResultSetToUser(rs);
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, githubUsername);
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
                     }
                 }
             }
         }
+        return -1;
+    }
+
+    /**
+     * Giữ hàm authenticate để phục vụ JWTAuthService (trả về null tạm thời do DB chưa hỗ trợ password)
+     */
+    public UserDTO authenticate(String username, String rawPassword) throws SQLException {
         return null;
     }
 
@@ -36,20 +50,6 @@ public class UserDAO {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToUser(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    public UserDTO getUserByUsername(String username) throws SQLException {
-        String sql = "SELECT * FROM users WHERE username = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToUser(rs);
@@ -79,11 +79,8 @@ public class UserDAO {
     private UserDTO mapResultSetToUser(ResultSet rs) throws SQLException {
         UserDTO user = new UserDTO();
         user.setUserId(rs.getInt("user_id"));
-        user.setUsername(rs.getString("username"));
-        user.setPasswordHash(rs.getString("password_hash"));
         user.setFullName(rs.getString("full_name"));
         user.setEmail(rs.getString("email"));
-        user.setRole(rs.getString("role"));
         user.setGithubUsername(rs.getString("github_username"));
         user.setCreatedAt(rs.getTimestamp("created_at"));
         return user;
